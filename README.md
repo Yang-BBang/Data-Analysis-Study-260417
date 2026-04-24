@@ -32,9 +32,9 @@
 
 | PCA Plot | ROC Curve |
 | :---: | :---: |
-| ![PCA](./images/PCA_Plot.png) | ![ROC](./images/ROC_Curve.png) |
+| ![PCA](./Grapgh/PCA_Plot.png) | ![ROC](./Grapgh/ROC_Curve.png) |
 | **Volcano Plot** | **Heatmap** |
-| ![Volcano](./images/Volcano_Plot.png) | ![Heatmap](./images/Heatmap.png) |
+| ![Volcano](./Grapgh/Volcano_Plot.png) | ![Heatmap](./Grapgh/Heatmap.png) |
 
 ---
 
