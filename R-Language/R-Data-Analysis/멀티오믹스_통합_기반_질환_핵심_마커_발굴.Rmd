@@ -1,0 +1,156 @@
+---
+title: "멀티오믹스_통합_기반_질환_핵심_마커_발굴"
+author: "SY"
+date: "2026-04-24"
+output: html_document
+---
+
+## 1. 서론
+ 최근 바이오 데이터 분석 시장에서는 단일 오믹스 정보만으로는 질병의 복잡한 원인을 파악하는 데 한계가 있다는 인식이 커지고 있음. 특히 전사체(Transcriptomics)와 실제 대사 흐름(Metabolomics) 사이의 괴리를 메우기 위해 이 두 데이터를 통합하여 분석하는 기법이 필수적인 추세임.
+ 이에 본 분석은 가상의 전사체와 대사체 데이터를 유기적으로 결합하는 멀티오믹스 통합 분석 파이프라인을 실습하고, 데이터 간의 상관관계를 통해 질환의 핵심 마커를 발굴하는 기술을 연습하는 데 목적으로 함.
+
+## 2. 본론
+#### STEP 1: 데이터 통합 및 전처리 (Data Integration)
+ 분석을 위해 tidyverse와 시각화 특화 패키지들을 사용.
+ 전사체(Transcriptomics)와 대사체(Metabolomics) 데이터 생성 및 정규화.
+```{R}
+# 필수 패키지 로드 
+# 이전 연습 과정에서 패키지가 없을 시 에러가 일어난 문제점을 보완하기 위해 pacman 패키지 활용.
+if (!require("pacman")) install.packages("pacman")
+# p_load: 없으면 설치 -> 로드
+pacman::p_load(tidyverse,     # 데이터 가공 및 시각화 도구
+               pheatmap,      # 히트맵 생성
+               igraph,        # 네트워크 구축
+               patchwork,     # 여러 개의 그래프 배치
+               RColorBrewer)  # 색상 조합 제공
+
+# 그래프 내 영문 폰트 가독성을 위한 설정
+theme_set(theme_bw(base_size = 12))  # 모든 그래프의 배경 흰색, 12pt 고정. 
+
+# 1. 가상 데이터 설계 및 생성
+set.seed(42)
+ # 통계적 유의성을 위해 Control 6개, Disease 6개 총 12개의 샘플 설계.
+n_samples <- 12
+groups <- factor(c(rep("Control", 6), rep("Disease", 6)))  # 각각의 집단 6회 반복 .
+sample_names <- c(paste0("CON_", 1:6), paste0("DIS_", 1:6))  # CON_숫자 이런 식으로 이름 생성.
+
+ # 실제 데이터와 유사한 분포 생성
+genes_raw <- matrix(rnorm(500 * n_samples, 10, 2), 500, n_samples) # 평균 10, 표준편차 2인 랜덤 숫자를 뽑아 500 * 12의 수만큼 만듦. (행: 500, 열: 12) 
+metab_raw <- matrix(rnorm(100 * n_samples, 5, 1.5), 100, n_samples) # 평균 5, 표준편차 1.5인 랜덤 숫자를 뽑아 100 * 12의 수만큼 만듦. (행: 100, 열: 12) 
+
+ # Matrix(표)의 행 및 열 이름 지정(ex. 행: Gene_숫자, 열: sample_names)
+rownames(genes_raw) <- paste0("Gene_", 1:500); colnames(genes_raw) <- sample_names
+rownames(metab_raw) <- paste0("Metab_", 1:100); colnames(metab_raw) <- sample_names
+
+# 2. 질환 특이적 상관관계 주입 (가상의 대사경로 생성)
+ # 유전자와 대사체 중 일부(군집으로 설정)와 Disease의 수치를 높여, 질병의 원인(질병 마커)으로 설정.
+genes_raw[1:15, 7:12] <- genes_raw[1:15, 7:12] + 3
+metab_raw[1:10, 7:12] <- metab_raw[1:10, 7:12] + 2.5
+
+# 3. 데이터 정규화
+ # 데이터의 평균을 0, 표준편차를 1
+ # t(): Transpose (함수의 열과 행 전치) - scale()은 열을 기준으로 평균과 표준편차를 계산하기 때문.
+genes_norm <- scale(t(genes_raw)) %>% t()
+metab_norm <- scale(t(metab_raw)) %>% t()
+```
+
+#### STEP 2: 개별 오믹스 탐색적 분석 (Single-omics EDA)
+ 그룹 간 변별력을 확인하고 통계적으로 유의미한 마커 선별.
+```{R}
+# 1-1. 전사체 PCA (Transcriptomics)
+gene_res <- prcomp(t(genes_norm))  # 정규화한 데이터를 전치 후, prcomp() 계산 결과 주성분(PC1~12) 생성.
+gene_df  <- as.data.frame(gene_res$x) %>% mutate(Group = groups)  # 주성분 좌표(x) 행렬을 열로 지정 후 groups를 열에 추가.  
+
+p_gene_pca <- ggplot(gene_df, aes(x = PC1, y = PC2, color = Group)) +
+  geom_point(size = 4, alpha = 0.8) +
+  scale_color_manual(values = c("#377eb8", "#e41a1c")) +
+  labs(title = "PCA Analysis of Transcriptomics", x = "PC1", y = "PC2")
+
+# 1-2. 대사체 PCA (Metabolomics)
+metab_res <- prcomp(t(metab_norm))  # 정규화한 데이터를 전치 후, prcomp() 계산 결과 주성분(PC1~12) 생성.
+metab_df  <- as.data.frame(metab_res$x) %>% mutate(Group = groups)  # 주성분 좌표(x) 행렬을 열로 지정 후 groups를 열에 추가.
+
+p_metab_pca <- ggplot(metab_df, aes(x = PC1, y = PC2, color = Group)) +
+  geom_point(size = 4, alpha = 0.8) +
+  scale_color_manual(values = c("#4daf4a", "#984ea3")) + 
+  labs(title = "PCA Analysis of Metabolomics", x = "PC1", y = "PC2")
+
+# 2. 유의미 인자 추출 (P-value < 0.05)
+ # get_sig라는 함수 생성.
+ # data에서 개별 인자를 불러온 후 x로 지정.
+ # x와 groups간의 t-test 진행 후 P-value만 분리.
+ # P-value가 0.05보다 작은 것만 분리.
+get_sig <- function(data) {
+  p_vals <- apply(data, 1, function(x) t.test(x ~ groups)$p.value)  
+  return(data[p_vals < 0.05, , drop = FALSE])
+}
+
+sig_genes <- get_sig(genes_norm)  # 전사체를 넣어 함수 실행.
+sig_metab <- get_sig(metab_norm)  # 대사체를 넣어 함수 실행.
+
+head(sig_genes)  # 분리된 유전자 수치 확인.
+head(sig_metab)  # 분리된 대사체 수치 확인.
+
+print(p_gene_pca)  # 전사체 PCA plot 출력.
+print(p_metab_pca)  # 대사체 PCA plot 출력.
+```
+
+#### STEP 3: 통합 상관관계 분석 (Cross-omics Correlation)
+ 두 층위의 데이터를 연결하여 핵심 네트워크를 도출.
+```{R, warning = FALSE}
+# 1. 상관계수 계산
+ # cor(): 두 변수 간의 연관성을 계산. t()를 사용해 각 인자를 열로 배치함.
+ # method = "pearson": 직선적인 상관관계를 분석하는 표준 방식 (결과값: -1 ~ 1).
+ # 1에 가까울수록 유전자와 대사체의 관계는 정비례.
+ # -1에 가까울수록 유전자와 대사체의 관계는 반비례.
+cor_mat <- cor(t(sig_genes), t(sig_metab), method = "pearson")
+
+# 2. Professional Heatmap (pheatmap)
+ # color: 빨강(양의 상관관계), 파랑(음의 상관관계)를 위해 rev()사용하여 색상 팔레트 설정 (팔레트에서 빨강-노랑-파랑의 7개 대표 색상으로 100단계 그라데이션 생성).
+ # border_color = NA: 칸 사이 테두리 제거.
+pheatmap(cor_mat, 
+         main = "Cross-omics Correlation Heatmap",
+         color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100),
+         border_color = NA)
+
+# 3. Integrated Network Analysis (상관계수 0.75 기준)
+ # 양과 음 상관없이 상관계수 0.75 이상만 필터링(TRUE/FALSE).
+adj_mat <- abs(cor_mat) > 0.75
+ # TRUE인 관계들을 선으로 이어 네트워크 표현.
+ # incidence_matrix: 서로 다른 두 집단 사이의 관계를 나타내는 표를 네트워크로 변환.
+net <- graph_from_incidence_matrix(adj_mat)
+
+ # 3-1. 연결이 없는 노드 제거 (Isolated node removal)
+  # degree(): 연결된 선의 개수.
+  # delete.vertices(): 연결이 없는 인자 삭제.
+net_cleaned <- delete.vertices(net, which(degree(net) == 0))
+
+ # 3-2. 네트워크 시각화 커스텀
+  # V: 네트워크에 찍히는 점, E: 점들을 잇는 선
+  # 점들에 속성 부여
+V(net_cleaned)$color <- ifelse(V(net_cleaned)$type, "#ff7f00", "#377eb8")
+V(net_cleaned)$shape <- ifelse(V(net_cleaned)$type, "square", "circle")
+
+ # layout_with_fr -> Fruchterman-Reingold(FR): 연결된 점끼리 당기고, 연결되지 않은 점끼리 밀어냄.
+plot(net_cleaned, 
+     layout = layout_with_fr(net_cleaned),
+     vertex.label.cex = 0.7,   # 이름 크기: 0.7
+     vertex.size = 10,   # 점의 크기: 10
+     edge.width = 1.2,   # 선의 굵기: 1.2
+     main = "Multi-layered Interaction Network")
+```
+ 
+#### STEP 4: 생물학적 기전 해석 및 데이터 반출 (Conclusion)
+ 도출된 마커를 정리하고 추후 연습을 진행할 Python 머신러닝 단계를 위해 저장합니다.
+```{R}
+# 머신러닝용 통합 데이터셋 생성 (Samples as Rows, Markers as Columns)
+ml_ready_data <- t(rbind(sig_genes, sig_metab))   # rbind(): 행을 기준으로 데이터 병합.
+write.csv(ml_ready_data, "MultiOmics_Final_Dataset.csv")
+```
+
+## 3. 결론
+본 연습 과정을 통해 전사체와 대사체라는 서로 다른 층위의 데이터를 동일 샘플 기준으로 정렬하고 통합하는 전 과정을 수행. 분석 결과, 단일 오믹스 분석에서는 파악되지 않았던 '유전자-대사체' 간의 강한 상관관계(Correlation > 0.75)를 네트워크 그래프로 시각화함으로써, 특정 유전자가 어떤 대사 경로에 기여하는지 입체적으로 확인할 수 있었음. 결과적으로 통계적 유의성과 생물학적 연관성을 동시에 갖춘 핵심 마커 후보군을 성공적으로 도출하였음.
+
+#### 추후 연구 및 보완 방향 (Future Work)
+	1.	머신러닝 기반 예측 모델 고도화:
+    ->	이번 분석으로 발굴된 핵심 마커들을 피처(Feature)로 활용하여, Python의 Scikit-learn 환경에서 질환 유무를 판단하는 분류 모델(Classification Model)을 구축할 예정.
