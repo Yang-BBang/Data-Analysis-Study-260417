@@ -437,8 +437,8 @@ model &lt;- glm(diabetes ~ ., data = train_data, family = &quot;binomial&quot;)<
 <em>P-value</em>값 확인.</p>
 <p>-&gt; 이상치 제거 전에는 여러 변수가 중요해 보였으나, 정제 후 분석
 결과 <em>Glucose</em>만 압도적 유의성을 보임.</p>
-<p>-&gt; 기존에 중요하게 나타났던 <em>Mass, Pregnant</em> 등은 이상치를
-제거하자 통계적 유의성이 떨어지거나 잃었음.</p>
+<p>-&gt; 기존에 중요하게 나타났던 <em>Pregnant</em>는 이상치를 제거하자
+통계적 유의성을 잃었음.</p>
 <pre class="r"><code>summary(model)</code></pre>
 <pre><code>## 
 ## Call:

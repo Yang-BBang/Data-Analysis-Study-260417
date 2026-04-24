@@ -62,7 +62,7 @@ model <- glm(diabetes ~ ., data = train_data, family = "binomial")
  
  -> 이상치 제거 전에는 여러 변수가 중요해 보였으나, 정제 후 분석 결과 *Glucose*만 압도적 유의성을 보임.
  
- -> 기존에 중요하게 나타났던 *Mass, Pregnant* 등은 이상치를 제거하자 통계적 유의성이 떨어지거나 잃었음.
+ -> 기존에 중요하게 나타났던 *Pregnant*는 이상치를 제거하자 통계적 유의성을 잃었음.
 ```{R, warning = FALSE}
 summary(model)
 ```
