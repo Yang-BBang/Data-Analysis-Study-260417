@@ -1,17 +1,43 @@
-# 🧬 Bio-Data Analysis & Multi-omics Research
+# DATA-ANALYSIS-STUDY
 
-안녕하세요, **데이터 기반의 생물학적 통찰을 도출하는 연구자**입니다. 
-주로 R을 활용하여 임상 및 대사체 데이터를 분석하며, 통계적 유의성 검증과 시각화를 통해 핵심 바이오마커를 발굴하는 데 집중하고 있습니다. 
-
-## 🚀 Core Skills
-* **Languages:** `R` (Advanced), `Python` (Intermediate)
-* **Analysis:** Statistical Hypothesis Testing, Multi-omics Data Integration, Metabolomics
-* **Visualizations:** `ggplot2`, Heatmaps, Volcano Plots, PCA, ROC Curve
-* **Tools:** `Bioconductor`, `Scikit-learn`, `Git/GitHub`
+R과 Python을 활용한 데이터 분석 학습 및 프로젝트 기록 저장소입니다. 현재 생물정보학 데이터와 질환 예측 모델링을 중심으로 분석 역량을 쌓아가고 있습니다.
 
 ---
 
-## 📂 Featured Projects
+## Repository Structure
+
+### [Python-Language](./Python-Language)
+* **Python-Basic**: 기초 문법 및 데이터 구조 학습
+* **Python-Data-Analysis**: 라이브러리를 활용한 데이터 처리 실습
+
+### [R-Language](./R-Language)
+* **R-Basic**: R 프로그래밍 기초 및 통계 기초
+* **R-Data-Analysis**: 실전 데이터 분석 스크립트
+  * **당뇨병 유무 예측 및 핵심 인자 발굴**: 분류 모델 구축 및 변수 분석
+  * **대사체 데이터를 활용한 질환 핵심 마커 발굴**: 바이오마커 추출 및 시각화
+
+---
+
+## 🚀 Core Skills (Current)
+
+### 💻 Languages
+* `R`: 데이터 분석 및 시각화 주력 사용
+* `Python`: 기초 문법 및 데이터 분석 환경 활용
+
+### 🧪 Analysis & Visualization
+* **Metabolomics**: 대사체 데이터를 활용한 기초 분석
+* **Visualizations**: `ggplot2`를 활용한 데이터 시각화 (PCA, Volcano Plots 등)
+* **Modeling**: 질환 유무 예측을 위한 기초 모델링 및 ROC Curve 분석
+
+---
+
+## 🛠 Tools
+* **IDE**: `VS Code`, `RStudio`
+* **Version Control**: `Git`, `GitHub`
+
+---
+
+## Featured Projects
 
 ### 1️⃣ 당뇨병 유무 예측 및 임상 핵심 인자 발굴 ([리포트 보기](https://htmlpreview.github.io/?https://github.com/Yang-BBang/Data-Analysis-Study-260417/blob/main/R-Language/R-Data-Analysis/당뇨병_유무_예측_및_핵심_인자_발굴.html))
 임상 데이터를 활용하여 질환 예측에 기여하는 핵심 변수를 선별하고 통계적으로 검증한 프로젝트입니다.
