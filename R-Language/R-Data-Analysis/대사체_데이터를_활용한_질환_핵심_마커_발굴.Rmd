@@ -1,0 +1,126 @@
+---
+title: "대사체 데이터를 활용한 질환 핵심 마커 발굴"
+author: "SY"
+date: "2026-04-22"
+output: html_document
+---
+
+## 1. 서론
+ 가상의 대규모 대사체 농도 데이터(Metabolics Data) 내에서 질병 상태를 가장 잘 대변하는 핵심 바이오마커(Biomarker)를 발굴하는 것을 연습하기 위한 목적으로 함. 
+
+## 2. 데이터 준비 및 전처리
+```
+# 패키지 설치
+install.packages("ggfortify")
+install.packages("pheatmap")
+install.packages("gridExtra")
+```
+
+```{R, warning = FALSE}
+# 필수 라이브러리 로드
+library(tidyverse)
+library(ggfortify)  # PCA 시각화
+library(pheatmap)   # 히트맵
+library(gridExtra)  # 그래프 배치
+```
+
+#### [Step 1] 가상 대사체 데이터 생성 (샘플 40개, 대사체 500개)
+```{R}
+set.seed(123)  # 난수 발생 시드 고정
+n_samples <- 40  # 행 40개
+n_metabolites <- 500  # 열 500개  
+
+data_matrix <- matrix(rnorm(n_samples * n_metabolites), nrow = n_samples)  # 무작위 정규분포를 행40, 열500의 표 제작
+colnames(data_matrix) <- paste0("Metabolite_", 1:n_metabolites)  # 열 이름 (Metabolite_숫자)
+rownames(data_matrix) <- paste0("Sample_", 1:n_samples)  # 행 이름 (Sample_숫자)
+# paste(a, 1): a 1, paste0(a, 1): a1  -> 공백 여부
+
+
+# 그룹 정보 (Control 20, Disease 20) 및 마커 효과 부여
+group <- factor(c(rep("Control", 20), rep("Disease", 20)))
+data_matrix[21:40, 1:10] <- data_matrix[21:40, 1:10] + 2 # 1~10번 대사체를 마커로 설정, 마커의 대사체 농도를 2 올림.
+
+df <- as.data.frame(data_matrix)
+df$Group <- group # group열 추가 (Control, Disease)
+```
+
+#### [Step 2] PCA 분석: 그룹 간 분별력 확인
+```{R, warning = FALSE}
+pca_res <- prcomp(data_matrix, scale. = TRUE) # 변수 조합 후 데이터의 변동을 가장 잘 설명하는 주성분 축들을 계산, 단위 표준화
+autoplot(pca_res, data = df, colour = 'Group', frame = TRUE, frame.type = 'norm') +
+  theme_minimal() +
+  labs(title = "PCA Plot: Group Separation Check")
+```
+
+## 3. 차별 발현 분석 (Differential Expression Analysis)
+ 각 대사체에 대해 T-test를 실시하여 그룹 간 평균 차이를 검정함. 특히, 다중 검정 오류를 방지하기 위해 FDR(False Discovery Rate) 보정을 적용하여 가짜 마커를 제거함.
+
+#### [Step 3] 통계 분석 및 FDR 보정
+```{R}
+stats_results <- data.frame(Metabolite = colnames(data_matrix))
+
+# 통계적 유의성을 가진 대사체를 골라내기 위해 Control과 Disease의 T-test 진행 후 P-value값 추가
+stats_results$p_value <- sapply(1:n_metabolites, function(i) {
+  t.test(data_matrix[1:20, i], data_matrix[21:40, i])$p.value
+})
+
+# Control과 Disease 그룹 간 농도 차이 계산을 위해 Log2FC 진행 후 Log2FC값 추가
+stats_results$log2FC <- sapply(1:n_metabolites, function(i) {
+  mean(data_matrix[21:40, i]) - mean(data_matrix[1:20, i])
+})
+# fuction(i)의 역할: 1~500 사이 값을 i로 지정하고, 1회성 함수 제작
+
+# FDR(BH method) 보정 적용 (가짜 마커 제거)
+stats_results$adj_p <- p.adjust(stats_results$p_value, method = "BH") # 500번 반복시 가짜 마커가 반드시 생성됨. 이러한 값을 방지하기 위해 BH method를 통해 p-value값을 더 엄격히 계산하며 조정.
+
+# 조건문을 통해 p-value값과 log2FC값의 범위를 지정해 Significant와 Non-Sig 분리
+stats_results$Significance <- ifelse(stats_results$adj_p < 0.05 & abs(stats_results$log2FC) > 1, "Significant", "Non-Sig")
+```
+
+#### [Step 4] Volcano Plot: 핵심 마커 시각화
+```{R}
+# 시각화를 위해 y축의 adg_P의 값에 -log10을 취해서 둠.
+# Overplotting 방지를 위해 alpha를 통해 60% 투명도 부여
+# Significant를 구분하기 위해 geom_vline(xintercept = )과 geom_hline(yintercept = )을 통해 기준선 부여.
+ggplot(stats_results, aes(x = log2FC, y = -log10(adj_p), color = Significance)) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(values = c("grey", "red")) +
+  theme_minimal() +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
+  labs(title = "Volcano Plot for Biomarker Discovery",
+       x = "Log2 Fold Change (Disease / Control)", y = "-Log10 Adjusted P-value")
+```
+
+## 4. 최종 마커 검증 및 결론
+ 상위 10개 마커의 패턴을 히트맵으로 시각화하여 샘플별 발현 양상을 최종 확인함.
+
+#### [Step 5] Heatmap: 최상위 마커 패턴 확인
+```{R}
+# 유의미한 10개의 마커 분리
+top_markers <- stats_results %>%
+  arrange(adj_p) %>%
+  head(10) %>%
+  pull(Metabolite)
+
+# 분리한 마커의 열만 선택하여 히트맵 제작.
+# 샘플들이 Control과 Disease인지 표시하기 위해 annotation_row를 sample 이름과 대조해 색깔 막대 생성.
+# 파랑->하양->빨강을 100단계 그라데이션으로 나눔.
+pheatmap(data_matrix[, top_markers], 
+         annotation_row = data.frame(Group = group, row.names = rownames(data_matrix)),
+         main = "Pattern Analysis of Top 10 Metabolite Markers",
+         color = colorRampPalette(c("blue", "white", "red"))(100))
+```
+
+## 결론
+### 1. 추후 연구 방향성
+
+ 실제 데이터로 해당 분석을 진행했다면 추후에 다음과 같은 연구의 방향성을 정할 수 있을 것임.
+ 
+#### 1) 생물학적 기전
+
+ 통계적 유의성을 가진 마커는 발굴했지만 왜 그런지에 대해서 연구가 필요함.
+ 
+#### 2) 머신러닝 모델 생성
+
+ 새로운 샘플이 들어올 경우 질병의 여부를 예측하는 모델 제작.

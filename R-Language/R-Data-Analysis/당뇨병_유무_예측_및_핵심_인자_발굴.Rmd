@@ -1,0 +1,130 @@
+---
+title: "당뇨병 유무 예측 및 핵심 인자 발굴"
+author: "SY"
+date: "2026-04-22"
+output: html_document
+---
+
+## 1. 서론(Introduction)
+ 본 분석은 피마 인디언 당뇨 데이터셋을 활용하여 생체 지표(혈당, BMI 등)가 당뇨병 발병에 미치는 영향을 분석하고, 머신러닝 모델을 통해 발병 여부를 예측하는 것을 목적으로 함.
+ 
+## 2. 데이터 준비 및 전처리
+ 데이터 구조 확인 중 이상치 발견
+ 
+ -> 이상치 제거 후 데이터 수 감소 (768 -> 392)
+```{R, warning = FALSE}
+library(mlbench)
+data(PimaIndiansDiabetes)
+df <- PimaIndiansDiabetes
+
+# 데이터 구조 확인
+str(df)
+head(df)
+
+# 이상치 발견 및 처리
+library(dplyr)
+df_final <- df %>%
+  mutate(across(c(glucose, pressure, triceps, insulin, mass, age, pedigree),
+                ~ ifelse(. == 0, NA, .))) %>%
+  filter(complete.cases(.))
+```
+
+## 3. 탐색적 데이터 분석 (EDA)
+ 결측치 및 이상치 유무 확인과 변수 간의 상관성 확인을 통해 데이터 타당성 검토.
+```{R, warning = FALSE}
+# 상관관계 분석 및 시각화
+library(ggcorrplot)
+corr <- round(cor(df_final[, -9]), 1) # 마지막 열(당뇨유무) 제외하고 계산, 소숫점 1자리까지 표기
+ggcorrplot(corr, hc.order = TRUE, type = "lower", lab = TRUE)
+```
+
+## 4. 머신러닝 모델 구축
+ 분석의 재현성을 높이기 위해 기준점 생성 후 전체 70%에 해당하는 행을 무작위 추첨.
+
+-> 이를 학습용으로 지정.
+
+-> 남은 30%를 시험용으로 지정.
+
+
+ 추첨된 274개의 행 중에 *Diabetes*를 제외한 나머지 변수들과 *Diabetes* 유무 사이의 관계 학습.
+
+-> 새로운 변수값을 넣었을 때 당뇨일 확률(0~1) 분석.
+```{R, warning = FALSE}
+set.seed(123) #분석의 재현성을 보장하기 위함.
+idx <- sample(1:nrow(df_final), nrow(df_final) * 0.7)
+train_data <- df_final[idx, ]
+test_data  <- df_final[-idx, ]
+
+# 로지스틱 회귀 모델 생성
+model <- glm(diabetes ~ ., data = train_data, family = "binomial")
+```
+ 이상치 제거로 인해 데이터량이 절반 가량 줄었으므로, 각 변수의 *P-value*값 확인.
+ 
+ -> 이상치 제거 전에는 여러 변수가 중요해 보였으나, 정제 후 분석 결과 *Glucose*만 압도적 유의성을 보임.
+ 
+ -> 기존에 중요하게 나타났던 *Mass, Pregnant* 등은 이상치를 제거하자 통계적 유의성이 떨어지거나 잃었음.
+```{R, warning = FALSE}
+summary(model)
+```
+
+## 5. 시각화 (Visualization)
+#### 1) 변수 중요도 (Feature Importance)
+ 
+ - 학습 이후 당뇨 유무 예측에 가장 효과있는 변수 확인.
+ 
+ - *model* 전체 중 각 변수의 영향력값 추출 후 절대값 확인.
+ 
+   -> *important*로 지정.
+   
+   -> *important*가 높은 순으로 막대그래프 생성.
+   
+```{R, warning = FALSE}
+# 변수 중요도 시각화
+importance <- abs(summary(model)$coefficients[-1, "z value"])
+barplot(sort(importance, decreasing = TRUE), col = "steelblue", las = 2, main = "Feature Importance")
+```
+
+#### 2) ROC 커브와 AUC
+
+ - 학습 모델의 결과값 그래프 도출.
+ 
+ - test_data 결과 도출.(0~1 사이값)
+ 
+   -> 실제 결과값과 예측값 대조 후 roc_obj로 지정
+   
+   -> 그래프 생성
+   
+   -> 가로축: 오답을 정답으로 한 비율, 세로축: 정답을 정답으로 한 비율
+   
+```{R, warning = FALSE}
+# ROC 커브 시각화
+library(pROC)
+pred <- predict(model, newdata = test_data, type = "response")
+roc_obj <- roc(test_data$diabetes, pred)
+plot(roc_obj, col = "red", main = paste("ROC Curve (AUC =", round(auc(roc_obj), 3), ")"))
+```
+
+## 6. 결론
+#### Model 성능 분석
+
+ 이상치를 제거하여 데이터가 768개에서 392개로 감소했음에도 불구하고, *AUC* 수치가 0.803으로 나타남. 이는 *Model*이 새로운 데이터를 접했을 때 당뇨 여부를 상당히 높은 정확도로 예측 가능하다고 판단할 수 있음.
+  
+  
+#### 핵심 예측 인자
+
+ 당뇨 예측의 가장 결정적인 영향을 미치는 핵심 인자는 *Glucose*이며, 뒤를 이어 *Mass, Pedigree, Age*가 유의미한 예측 인자로 확인됨(P < 0.05).
+ 
+ 반면, 기존 분석에서 중요하게 다뤄졌던 *Pregnant*는 이상치 제거 후 통계적 유의성을 상실함(P-value 0.79). 이는 측정 오류가 포함된 데이터가 모델의 판단을 왜곡시킬 수 있음을 보여주며, 당뇨 예측에는 임신 횟수보다 내과적 지표와 유전적 요인이 더 본질적인 인자임을 입증함.
+ 
+ 
+#### 추가로 수행해야할 분석
+
+**1.Model의 교차 검증**
+ 
+ -> 난수 시드값을 다양하게 적용하여 특정 데이터에만 편향된 것이 아님을 입증해야함.
+
+
+**2.변수 선택 최적화**
+ 
+ -> 유의미하지 않은 인자들을 제외한 간소화된 모델의 성능 변화를 확인할 필요가 있음.
+ 
