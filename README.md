@@ -19,7 +19,7 @@
     * **비판적 전처리:** `Pregnant` 변수의 이상치를 제거한 후 재분석을 수행하여, 측정 오류가 통계적 유의성을 왜곡할 수 있음을 증명 ($P$-value $0.05 \rightarrow 0.79$).
 * **Tech Stack:** R, Logistic Regression, Outlier Detection, ROC Analysis
 
-### 2️⃣ 대사체 데이터를 활용한 질환 핵심 마커 발굴 ([리포트 보기](https://github.com/Yang-BBang/Data-Analysis-Study-260417/blob/main/대사체_데이터를_활용한_질환_핵심_마커_발굴.html))
+### 2️⃣ 대사체 데이터를 활용한 질환 핵심 마커 발굴 ([리포트 보기](https://htmlpreview.github.io/?https://github.com/Yang-BBang/Data-Analysis-Study-260417/blob/main/대사체_데이터를_활용한_질환_핵심_마커_발굴.html))
 수천 개의 대사체 데이터 중 질환군과 대조군을 구분 짓는 유의미한 마커를 발굴하는 프로세스를 구축했습니다.
 * **Key Insight:** * **Volcano Plot**을 활용하여 Fold Change와 P-value를 동시에 만족하는 유의 대사체 선별.
     * **PCA & Heatmap** 시각화를 통해 그룹 간의 명확한 패턴 차이 및 변별력 증명.
