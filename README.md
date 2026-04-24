@@ -13,7 +13,7 @@
 
 ## 📂 Featured Projects
 
-### 1️⃣ 당뇨병 유무 예측 및 임상 핵심 인자 발굴 ([리포트 보기](./R-Language/R-Data-Analysis/당뇨병_유무_예측_및_핵심_인자_발굴.html)
+### 1️⃣ 당뇨병 유무 예측 및 임상 핵심 인자 발굴 ([리포트 보기](https://htmlpreview.github.io/?https://github.com/Yang-BBang/Data-Analysis-Study-260417/blob/main/R-Language/R-Data-Analysis/당뇨병_유무_예측_및_핵심_인자_발굴.html))
 임상 데이터를 활용하여 질환 예측에 기여하는 핵심 변수를 선별하고 통계적으로 검증한 프로젝트입니다.
 * **Key Insight:** * `Glucose`, `Mass`, `Age`가 당뇨병 예측의 주요 인자임을 확인 ($P < 0.05$).
     * **비판적 전처리:** `Pregnant` 변수의 이상치를 제거한 후 재분석을 수행하여, 측정 오류가 통계적 유의성을 왜곡할 수 있음을 증명 ($P$-value $0.05 \rightarrow 0.79$).
