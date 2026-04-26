@@ -187,3 +187,26 @@ elif 0 <= temp < 10:
     print("외투를 챙기세요")
 else:
     print("너무 추워요. 나가지 마세요")
+
+
+
+ # 6-2. for
+print("대기번호 1")
+print("대기번호 2")
+print("대기번호 3")
+print("대기번호 4")
+
+# 위의 코드를 for문으로 바꾼다면
+for waiting_no in [0, 1, 2, 3, 4]:  # R: for (waiting_no in c(0, 1, 2, 3, 4))
+    print("대기번호 : {0}".format(waiting_no))  # R: print(paste("대기번호 :", waiting_no)) 
+
+# 위의 코드와 같은 의미의 코드
+for waiting_no in range(5):
+    print(f"대기번호 : {waiting_no}")
+
+for waiting_no in range(1, 6):  # R: for (waiting_no in 1:5)  # range(1, 6) 는 1부터 5까지의 숫자를 생성하는 함수
+    print(f"대기번호 : {waiting_no}")   
+
+starbucks = ["아이언맨", "토르", "아이엠 그루트"]
+for customer in starbucks:
+    print(f"{customer}, 커피가 준비되었습니다.")
