@@ -234,3 +234,22 @@ person = "Unknown"
 while person != customer:
     print(f"{customer}, 커피가 준비되었습니다")
     person = input("이름이 어떻게 되세요?")
+
+
+
+# 6-4. continue, break
+absent = [2, 5]  # 결석한 학생 번호
+for student in range(1, 11):  # 1부터 10까지의 학생 번호
+    if student in absent:
+        continue  # 결석한 학생은 다음 반복으로 넘어감
+    print(f"{student}번, 책을 읽어봐")  # 결석하지 않은 학생은 책을 읽어보라고 출력 
+
+no_book = [7]  # 책을 깜빡한 학생 번호
+for student in range(1, 11):
+    if student in no_book:
+        print(f"오늘 수업은 여기까지. {student}번, 오늘 수업 끝나고 교무실로 따라와.")  # 책을 깜빡한 학생은 수업 끝나고 교무실로 오라고 출력
+        break  # 책을 깜빡한 학생이 나오면 반복문 종료
+    print(f"{student}번, 책을 읽어봐")  # 책을 깜빡하지 않은 학생은 책을 읽어보라고 출력
+
+
+
