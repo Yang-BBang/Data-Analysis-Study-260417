@@ -84,3 +84,47 @@ mix_list = ["조세호", 20, True]
 
 num_list.extend(mix_list)  # num_list에 mix_list의 요소들을 추가
 print(num_list)
+
+
+
+# 5-2. 사전
+cabinet = {3: "유재석", 100: "김태호"}  # 케비넷 열쇠는 3, 100이고, 각각 유재석과 김태호가 쓰고 있다.
+print(cabinet)
+print(cabinet[3])  # 3번 열쇠를 가져오면 유재석이 나온다.
+print(cabinet[100])  # 100번 열쇠를 가져오면 김태호가 나온다.
+print(cabinet.get(3))  # get()을 사용해서도 3번 열쇠를 가져올 수 있다.
+
+print(cabinet.get(5))  # get()을 사용해서 5번 열쇠를 가져오려고 하면 None이 나온다.
+print(cabinet.get(5, "사용 가능"))  # get()을 사용할 때 두 번째 인자로 "사용 가능"을 넣으면, 5번 열쇠가 없을 때 "사용 가능"이라는 메시지를 출력할 수 있다.
+
+print(3 in cabinet)  # 3번 열쇠가 케비넷 안에 있는지 확인할 수 있다. True
+print(5 in cabinet)  # 5번 열쇠가 케비넷 안에 있는지 확인할 수 있다. False
+
+# 새 손님
+cabinet = {"A-3": "유재석", "B-100": "김태호"}
+cabinet["c-20"] = "조세호"  # 새로운 손님이 왔을 때, 새로운 열쇠와 이름을 추가하거나 사용 중일 경우 업데이트할 수 있다.
+print(cabinet)
+
+# 간 손님
+del cabinet["A-3"]  # 손님이 나갔을 때, 열쇠와 이름을 삭제할 수 있다.
+print(cabinet)
+
+# key 들만 출력
+print(cabinet.keys())
+
+# value 들만 출력
+print(cabinet.values())
+
+# 폐업
+cabinet.clear()  # 케비넷을 모두 비울 수 있다.
+
+
+# + 튜플
+# 튜플은 리스트와 거의 비슷하지만, 한 번 만들면 내용을 변경할 수 없다. 그래서 리스트보다 더 안전하게 데이터를 관리할 수 있다.
+# 리스트는 수정 가능
+menu_list = ["돈까스", "치즈까스"]
+menu_list[0] = "생선까스" # 가능
+
+# 튜플은 수정 불가능
+menu_tuple = ("돈까스", "치즈까스")
+# menu_tuple[0] = "생선까스" # 에러 발생
