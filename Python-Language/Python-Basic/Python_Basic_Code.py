@@ -257,3 +257,18 @@ for student in range(1, 11):
 
 
 
+# 6-5. 한 줄 for문
+# 출석번호가 1, 2, 3, 4, 5, 앞에 100을 붙이기로 함 -> 101, 102, 103, 104, 105
+students = [1, 2, 3, 4, 5]
+students = [i + 100 for i in students]  # 학생 번호에 100을 더하는 한 줄 for문
+print(students)
+
+# 학생 이름을 길이로 변환
+students = ["Iron man", "Thor", "I am Groot"]
+students = [len(i) for i in students]  # 학생 이름의 길이를 구하는 한 줄 for문
+print(students)
+
+# 학생 이름을 대문자로 변환
+students = ["Iron man", "Thor", "I am Groot"]
+students = [i.upper() for i in students]  # 학생 이름을 대문자로 변환하는 한 줄 for문
+print(students)
