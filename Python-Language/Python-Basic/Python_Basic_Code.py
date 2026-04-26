@@ -210,3 +210,27 @@ for waiting_no in range(1, 6):  # R: for (waiting_no in 1:5)  # range(1, 6) 는 
 starbucks = ["아이언맨", "토르", "아이엠 그루트"]
 for customer in starbucks:
     print(f"{customer}, 커피가 준비되었습니다.")
+
+
+
+# 6-3. while
+customer = "토르"
+index = 5
+while index >= 1:
+    print(f"{customer}, 커피가 준비되었습니다. {index}번 남았어요.")
+    index -= 1  # index = index - 1
+    if index == 0:
+        print("커피는 폐기처분되었습니다.")
+
+# 무한루프 생성
+# customer = "아이언맨"
+# index = 1
+# while True:  # 항상 참이기 때문에 무한루프가 된다.
+#     print(f"{customer}, 커피가 준비되었습니다. 호출 {index}회")
+#     index += 1
+
+customer = "토르"
+person = "Unknown"
+while person != customer:
+    print(f"{customer}, 커피가 준비되었습니다")
+    person = input("이름이 어떻게 되세요?")
