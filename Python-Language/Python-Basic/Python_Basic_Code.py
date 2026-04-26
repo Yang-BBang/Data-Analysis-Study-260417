@@ -185,5 +185,5 @@ elif 10 <= and temp < 30:  # R: elif (10 <= temp < 30)
     print("괜찮은 날씨에요")
 elif 0 <= temp < 10:
     print("외투를 챙기세요")
-elif: 
+else:
     print("너무 추워요. 나가지 마세요")
