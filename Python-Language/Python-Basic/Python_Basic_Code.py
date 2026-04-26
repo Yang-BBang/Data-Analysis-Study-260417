@@ -129,3 +129,34 @@ menu_list[0] = "생선까스" # 가능
 # 튜플은 수정 불가능
 menu_tuple = ("돈까스", "치즈까스")
 # menu_tuple[0] = "생선까스" # 에러 발생
+
+
+
+# 5-4. 세트(set)
+# 세트는 집합을 의미한다. 중복된 값을 허용하지 않고, 순서가 없다. 그래서 리스트나 튜플보다 더 빠르게 데이터를 처리할 수 있다.
+
+my_set = {1, 2, 3, 3, 3}  # 중복된 값이 있어도 하나만 남는다.
+print(my_set)
+
+java = {"유재석", "김태호", "양세형"}
+python = set(["유재석", "박명수"])
+
+# 교집합 (java와 python을 모두 할 수 있는 개발자)
+print(java & python)  # R: intersect(java, python)
+print(java.intersection(python))  # R: "
+
+# 합집합 (java 할 수 있거나 python 할 수 있는 개발자)
+print(java | python)  # R: union(java, python)
+print(java.union(python))  # R: "
+
+# 차집합 (java는 할 수 있지만 python은 할 줄 모르는 개발자)
+print(java - python)  # R: setdiff(java, python)
+print(java.difference(python))  # R: "
+
+# python을 할 줄 아는 사람이 늘어남
+python.add("김태호")
+print(python)
+
+# java를 잊어버림
+java.remove("김태호")
+print(java)
