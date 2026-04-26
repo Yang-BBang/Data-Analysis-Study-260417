@@ -87,6 +87,7 @@ mix_list = ["조세호", 20, True]
 num_list.extend(mix_list)  # num_list에 mix_list의 요소들을 추가
 print(num_list)
 
+
 # + 튜플
 # 튜플은 리스트와 거의 비슷하지만, 한 번 만들면 내용을 변경할 수 없다. 그래서 리스트보다 더 안전하게 데이터를 관리할 수 있다.
 # 리스트는 수정 가능
@@ -96,6 +97,7 @@ menu_list[0] = "생선까스" # 가능
 # 튜플은 수정 불가능
 menu_tuple = ("돈까스", "치즈까스")
 menu_tuple[0] = "생선까스" # 에러 발생
+
 
 
 # 5-2. 사전
@@ -131,6 +133,7 @@ print(cabinet.values())
 cabinet.clear()  # 케비넷을 모두 비울 수 있다.
 
 
+
 # 5-4. 세트(set)
 # 세트는 집합을 의미한다. 중복된 값을 허용하지 않고, 순서가 없다. 그래서 리스트나 튜플보다 더 빠르게 데이터를 처리할 수 있다.
 
@@ -159,3 +162,28 @@ print(python)
 # java를 잊어버림
 java.remove("김태호")
 print(java)
+
+
+
+
+
+# 6. 제어문
+# 6-1. if
+
+wether = input("오늘 날씨는 어때요? ")  # 사용자로부터 입력을 받는 함수
+if wether == "비" or wether == "눈":  # R: if (wether == "비" | wether == "눈")
+    print("우산을 챙기세요")
+elif wether == "미세먼지":
+    print("마스크를 챙기세요")
+else:
+    print("준비물 필요 없어요")        
+
+temp = int(input("기온은 어때요? "))  # 사용자로부터 입력을 받는 함수, 입력받은 값은 문자열이므로 int() 함수를 사용하여 정수로 변환
+if temp >= 30:
+    print("너무 더워요. 나가지 마세요")
+elif 10 <= and temp < 30:  # R: elif (10 <= temp < 30)
+    print("괜찮은 날씨에요")
+elif 0 <= temp < 10:
+    print("외투를 챙기세요")
+elif: 
+    print("너무 추워요. 나가지 마세요")
