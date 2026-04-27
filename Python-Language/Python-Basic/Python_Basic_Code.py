@@ -310,3 +310,43 @@ balance = withdraw(balance, 2000)  # 잔액이 부족하기에 불가능
 balance = withdraw(balance, 500)
 commission, balance = withdraw_night(balance, 200)
 commission, balance = withdraw_night(balance, 1000)  # 잔액이 부족하기에 불가능
+
+
+
+
+
+# <<머신러닝 기초>>
+
+# 9-1. 클래스
+# 마린 : 공격 유닛, 군인. 총을 쏠 수 있음
+name = "마린"  # 유닛의 이름
+hp = 40  # 유닛의 체력
+damage = 5  # 유닛의 공격력
+
+print(f"{name} 유닛이 생성되었습니다.")
+print(f"체력 {hp}, 공격력 {damage}\n")  # \n : 줄바꿈. 밑에 빈 줄 하나 추가
+
+# 탱크 : 공격 유닛, 탱크. 포를 쏠 수 있음, 일반 모드 / 시즈 모드.
+tank_name = "탱크"
+tank_hp = 150
+tank_damage = 35
+
+print(f"{tank_name} 유닛이 생성되었습니다.")
+print(f"체력 {tank_hp}, 공격력 {tank_damage}\n")
+
+tank2_name = "탱크"
+tank2_hp = 150
+tank2_damage = 35
+
+print(f"{tank2_name} 유닛이 생성되었습니다.")
+print(f"체력 {tank2_hp}, 공격력 {tank2_damage}\n")
+
+def attack(name, location, damage):
+    print(f"{name} : {location} 방향으로 적군을 공격합니다. [공격력 {damage}]")
+
+attack(name, "1시", damage)
+attack(tank_name, "1시", tank_damage)
+attack(tank2_name, "1시", tank2_damage)
+# 공격 유닛이 많아질수록, 공격 유닛의 정보를 저장하는 변수도 많아지고, 공격 유닛을 공격하는 함수도 많아짐.
+# 그래서 클래서라는 것을 만들어서, 유닛의 정보를 저장하는 변수와 유닛이 하는 행동을 함수로 묶어서 관리할 수 있음.
+
