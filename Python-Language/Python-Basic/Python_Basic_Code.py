@@ -410,3 +410,31 @@ firebat1.attack("5시")  # attack 메소드 호출하여 공격 방향을 "5시"
 
 firebat1.damaged(25)  # damaged 메소드 호출하여 받은 데미지를 25로 지정
 firebat1.damaged(25) 
+
+
+
+
+
+# <<실전 준비 (입출력 & 분석 도구 설치)>>
+
+# 8-5. with
+ # 파일 입출력 시 with문을 사용하면 파일을 안전하게 열고 닫는 것을 자동으로 처리할 수 있음.
+ # pickle 모듈은 파이썬 객체를 파일로 저장하거나 파일에서 불러올 때 사용되는 모듈로, 객체를 직렬화하여 저장하거나 역직렬화하여 불러올 수 있음.
+import pickle
+
+with open("profile.pickle", "rb") as profile_file:
+    print(pickle.load(profile_file))
+
+ # 일반 파일
+ # 쓰기
+with open("study.txt", "w", encoding="utf8") as study_file:
+    study_file.write("파이썬을 열심히 공부하고 있어요")
+
+ # 읽기 
+with open("study.txt", "r", encoding="utf8") as study_file:
+    print(study_file.read())
+
+ # 실제 파일로 연습
+with open("MultiOmics_Final_Dataset.csv", "r", encoding="utf8") as f:
+    data = f.read()
+    print(data)
