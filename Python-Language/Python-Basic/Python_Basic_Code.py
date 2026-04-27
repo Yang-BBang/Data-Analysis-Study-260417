@@ -350,3 +350,17 @@ attack(tank2_name, "1시", tank2_damage)
 # 공격 유닛이 많아질수록, 공격 유닛의 정보를 저장하는 변수도 많아지고, 공격 유닛을 공격하는 함수도 많아짐.
 # 그래서 클래서라는 것을 만들어서, 유닛의 정보를 저장하는 변수와 유닛이 하는 행동을 함수로 묶어서 관리할 수 있음.
 
+class Unit:
+    def __init__(self, name, hp, damage):
+        self.name = name
+        self.hp = hp
+        self.damage = damage
+        print(f"{self.name} 유닛이 생성되었습니다")
+        print(f"체력 {self.hp}, 공격력 {self.damage}")
+
+marine1 = Unit("마린", 40, 5)
+marine2 = Unit("마린", 40, 5)
+tank = Unit("탱크", 150, 35)
+
+
+
