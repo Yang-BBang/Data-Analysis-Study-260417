@@ -413,6 +413,77 @@ firebat1.damaged(25)
 
 
 
+# 9-7. 메소드 오버라이딩 : 부모 클래스에서 정의된 메소드를 자식 클래스에서 재정의하여 사용하는 것.
+ # 일반 유닛
+class Unit:
+    def __init__(self, name, hp, speed):  
+        self.name = name
+        self.hp = hp
+        self.speed = speed
+    
+    def move(self, location):
+        print("[지상 유닛 이동]")
+        print(f"{self.name} : {location} 방향으로 이동합니다. [속도 {self.speed}]")
+
+ # 공격 유닛
+class AttackUnit:
+    def __init__(self, name, hp, speed, damage):
+        Unit.__init__(self, name, hp, speed)  # Unit 클래스의 __init__ 메소드 호출하여 name, hp, speed 초기화
+        self.damage = damage
+
+    def attack(self, location):
+        print(f"{self.name} : {location} 방향으로 적군을 공격합니다. [공격력 {self.damage}]")
+    # self.~는 위에서 지정한 객체 자신의 정보를 가리킨다. 
+    # location은 앞에 self.이 없으므로 입력 받은 값을 출력한다.
+
+    def damaged(self, damage):
+        print(f"{self.name} : {damage} 데미지를 입었습니다")
+        self.hp -= damage  # 입은 데미지 뺴기
+        print(f"{self.name} : 현재 체력은 {self.hp} 입니다.")
+        if self.hp <= 0:
+            print(f"{self.name} : 파괴되었습니다.")
+
+    def move(self, location):
+        print("[지상 유닛 이동]")
+        print(f"{self.name} : {location} 방향으로 이동합니다. [속도 {self.speed}]")
+
+ # 날 수 있는 기능을 가진 클래스
+class Flyable:
+    def __init__(self, flying_speed):
+        self.flying_speed = flying_speed
+
+    def fly(self, name, location):
+        print(f"{name} : {location} 방향으로 날아갑니다. [속도 {self.flying_speed}]")
+
+ # 공중 공격 유닛 클래스
+class FlyableAttackUnit(AttackUnit, Flyable):
+    def __init__(self, name, hp, damage, flying_speed):
+        AttackUnit.__init__(self, name, hp, 0, damage)  # 지상 스피드는 0으로 설정
+        Flyable.__init__(self, flying_speed)
+    
+    # move 메소드 오버라이딩
+    def move(self, location):
+        print("[공중 유닛 이동]")
+        self.fly(self.name, location)  # 공중 유닛은 fly 함수를 통해 날아갈 수 있기 때문에 fly 함수를 호출하여 이동하도록 구현
+
+
+ # 벌쳐 : 지상 유닛, 기동성이 좋음
+vulture = AttackUnit("벌쳐", 80, 10, 20)
+
+ # 배틀크루저 : 공중 유닛, 체력도 굉장히 좋음, 공격력도 좋음.
+battlecruiser = FlyableAttackUnit("배틀크루저", 500, 25, 3)
+
+vulture.move("11시")
+battlecruiser.fly(battlecruiser.name, "9시") 
+ # 만약 공중 유닛까지 존재한다면 move 이외에 fly 같은 메소드도 필요할 것.
+ # 그렇기에 매소드 오버라이딩을 통해 move 메소드를 재정의하여 공중 유닛과 지상 유닛이 각각 다른 방식으로 이동하도록 구현할 수 있다.
+
+ # 메소드 오버라이딩 추가 후
+vulture.move("11시")
+battlecruiser.move("9시") 
+
+
+
 
 
 # <<실전 준비 (입출력 & 분석 도구 설치)>>
