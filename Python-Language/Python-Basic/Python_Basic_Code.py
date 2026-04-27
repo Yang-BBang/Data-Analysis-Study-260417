@@ -518,9 +518,9 @@ with open("MultiOmics_Final_Dataset.csv", "r", encoding="utf8") as f:
  # -> 안될 경우 pip3로 변경 후 뒤에 --break-system-packages 붙이기
 
  # 예제 실행
-from bs4 import BeautifulSoup
-soup = BeautifulSoup("<p>Some<b>bad<i>HTML")
-print(soup.prettify())
+ # from bs4 import BeautifulSoup
+ # soup = BeautifulSoup("<p>Some<b>bad<i>HTML")
+ # print(soup.prettify())
 
  # 깔려있는 pip 패키지 내용 확인하는 방법
  # 터미널에 pip3 list 입력
