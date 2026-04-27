@@ -16,8 +16,15 @@ print(f"데이터 구조: {df.shape}")
 
 
 # [Code 셀]
-plt.figure(figsize=(12, 10))
-corr = df.corr()
-sns.heatmap(corr, annot=False, cmap='coolwarm')
-plt.title("Multi-Omics Correlation Matrix")
-plt.show()
+# plt.figure(figsize=(12, 10))
+# corr = df.corr()
+# sns.heatmap(corr, annot=False, cmap='coolwarm')
+# plt.title("Multi-Omics Correlation Matrix")
+# plt.show()
+
+
+
+# 라벨링: 인덱스에 'DIS'가 포함되면 1(질환), 아니면 0(정상)
+df['Target'] = [1 if 'DIS' in idx else 0 for idx in df.index]
+
+print(df['Target'].value_counts())
