@@ -351,7 +351,7 @@ attack(tank2_name, "1시", tank2_damage)
 # 그래서 클래서라는 것을 만들어서, 유닛의 정보를 저장하는 변수와 유닛이 하는 행동을 함수로 묶어서 관리할 수 있음.
 
 class Unit:
-    def __init__(self, name, hp, damage):
+    def __init__(self, name, hp, damage):  # __init__ : 아래 설명
         self.name = name
         self.hp = hp
         self.damage = damage
@@ -362,5 +362,5 @@ marine1 = Unit("마린", 40, 5)
 marine2 = Unit("마린", 40, 5)
 tank = Unit("탱크", 150, 35)
 
-
-
+# __init__ :  클래스의 생성자 함수로, 객체가 생성될 때 자동으로 호출되는 함수. 객체의 초기화 작업을 수행한다.
+# __init__ 함수에 정의된 갯수 만큼 인자를 전달해야 한다.
