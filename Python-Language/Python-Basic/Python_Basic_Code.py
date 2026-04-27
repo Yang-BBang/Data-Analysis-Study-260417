@@ -480,7 +480,7 @@ battlecruiser.fly(battlecruiser.name, "9시")
 
  # 메소드 오버라이딩 추가 후
 vulture.move("11시")
-battlecruiser.move("9시") 
+battlecruiser.move("9시")
 
 
 
@@ -509,3 +509,27 @@ with open("study.txt", "r", encoding="utf8") as study_file:
 with open("MultiOmics_Final_Dataset.csv", "r", encoding="utf8") as f:
     data = f.read()
     print(data)
+
+
+
+# 11-6. pip install
+ # https://pypi.org/ 접속
+ # 아래 터미널에 pip install beautifulsoup4 같은 복사문 입력 
+ # -> 안될 경우 pip3로 변경 후 뒤에 --break-system-packages 붙이기
+
+ # 예제 실행
+from bs4 import BeautifulSoup
+soup = BeautifulSoup("<p>Some<b>bad<i>HTML")
+print(soup.prettify())
+
+ # 깔려있는 pip 패키지 내용 확인하는 방법
+ # 터미널에 pip3 list 입력
+
+ # 패키지 정보 확인
+ # 터미널에 pip3 show beautifulsoup4 입력
+
+ # 패키지 업그레이드
+ # 터미널에 pip3 install --upgrade 패키지명 --break-system-packages 입력
+
+ # 패키지 삭제
+ # 터미널에 pip3 uninstall 패키지명 --break-system-packages 입력
